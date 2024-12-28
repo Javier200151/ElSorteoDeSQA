@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foro + Análisis + Sorteo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Foro + Análisis + Sorteo</h1>
+        <hr>
+        
+        <!-- Selección de Topics -->
+        <form id="form-analizar" method="POST" action="/analizar">
+            <h3>Selecciona 4 Topics</h3>
+            <div class="mb-3">
+                <label for="topics">Topics disponibles:</label>
+                <select name="topics" id="topics" class="form-select" multiple size="10" required>
+                    {% for title, url in topics %}
+                        <option value="{{ url }}">{{ title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Confirmar y Analizar</button>
+        </form>
+        
+        <hr>
+
+        <!-- Resultados -->
+        <div id="resultados">
+            <h3>Resultados del Análisis</h3>
+            <pre id="resultados-text" class="border p-3 bg-light"></pre>
+        </div>
+
+        <hr>
+
+        <!-- Sorteo -->
+        <h3>Iniciar Sorteo</h3>
+        <div class="mb-3">
+            <label for="premios">Premios (separados por comas):</label>
+            <input type="text" id="premios" class="form-control" placeholder="Premio 1, Premio 2, Premio 3">
+        </div>
+        <button id="iniciar-sorteo" class="btn btn-success">Iniciar Sorteo</button>
+        <div id="sorteo-resultados" class="mt-3">
+            <h4>Ganadores</h4>
+            <pre class="border p-3 bg-light"></pre>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('form-analizar').onsubmit = async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const response = await fetch('/analizar', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            document.getElementById('resultados-text').textContent = JSON.stringify(data, null, 2);
+        };
+
+        document.getElementById('iniciar-sorteo').onclick = async function() {
+            const premios = document.getElementById('premios').value.split(',').map(p => p.trim());
+            const response = await fetch('/sorteo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ premios })
+            });
+            const data = await response.json();
+            document.querySelector('#sorteo-resultados pre').textContent = JSON.stringify(data, null, 2);
+        };
+    </script>
+</body>
+</html>
