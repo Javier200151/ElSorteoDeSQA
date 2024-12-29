@@ -1,3 +1,4 @@
+import requests
 import random
 
 roles_importantes = {"Lider de escuadra", "Sargento", "HQ", "RTO", "JTAC", "Operador UAV", 
@@ -11,6 +12,13 @@ def cortar_string(texto, inicio, fin):
     if start == -1 or end == -1:
         return None
     return texto[start:end]
+
+def fetch_topics():
+    url = "https://foro.squadalpha.es/viewforum.php?f=18&sid=010f4a30f358286b9cd0298e71504ba8"
+    response = requests.get(url)
+    # Aquí puedes usar BeautifulSoup para extraer los temas del foro
+    # Esto es un placeholder para los temas
+    return [{"id": 1, "title": "Partida 1", "content": "Contenido"}]
 
 def calcular_papeletas(jugadores, partidas):
     resultados = {}
